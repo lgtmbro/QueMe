@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container mt-5 pt-5">
+<div class="bg-light p-5 rounded">
+    <table id="responses" class="display">
+        <thead>
+            <tr>
+                <th>Question</th>
+                <th>Response</th>
+                <th>MSISDN</th>
+                <th>Profile Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in table_data %}
+                <tr>
+                    <td>{{row.question}}</td>
+                    <td>{{row.response}}</td>
+                    <td>{{row.msisdn}}</td>
+                    <td>{{row.profile_name}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</main>
+
+{% endblock content %}
+
+{% block scripts%}
+<script>
+$(document).ready( function () {
+    $('#responses').DataTable();
+});
+</script>    
+{% endblock scripts %}

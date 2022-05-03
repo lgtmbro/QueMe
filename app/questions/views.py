@@ -10,26 +10,27 @@ from .utils import whatsapp_reply, random_success_gif
 
 from .models import Customer, Question, Ask
 
+
 def ask_a_question(customer):
-        answered_question_ids = [
-            ask["question_id"]
-            for ask in Ask.objects.filter(customer=customer).values("question_id")
-        ]
-        active_questions = Question.objects.order_by("-created_at").filter(active=True)
+    answered_question_ids = [
+        ask["question_id"]
+        for ask in Ask.objects.filter(customer=customer).values("question_id")
+    ]
+    active_questions = Question.objects.order_by("-created_at").filter(active=True)
 
-        selected_question = False
-        for question in active_questions:
-            if question.id not in answered_question_ids and selected_question is False:
-                selected_question = question
+    selected_question = False
+    for question in active_questions:
+        if question.id not in answered_question_ids and selected_question is False:
+            selected_question = question
 
-        if selected_question is False:
-            whatsapp_reply(
-                customer.msisdn,
-                "🎆 *You are all up to date!*\n\nWe currently dont have anymore questions for you, check back soon for more questions 🥳",
-            )
-        else:
-            Ask.objects.create(customer=customer, question=selected_question)
-            whatsapp_reply(customer.msisdn, f"*🤔 Question*: {selected_question.content}?")
+    if selected_question is False:
+        whatsapp_reply(
+            customer.msisdn,
+            "🎆 *You are all up to date!*\n\nWe currently dont have anymore questions for you, check back soon for more questions 🥳",
+        )
+    else:
+        Ask.objects.create(customer=customer, question=selected_question)
+        whatsapp_reply(customer.msisdn, f"*🤔 Question*: {selected_question.content}?")
 
 
 @csrf_exempt
@@ -75,17 +76,18 @@ def twilio_messages_ingress(request):
             Question.objects.order_by("-created_at").filter(active=True).count()
         )
 
-
-        success_msg = f"\
-*🥳 Done!*\n\n\
-*Question:*\n{current_ask.question.content}?\n\n\
-*Answer:*\n{current_ask.answer}\n\n\
-👍 Great job {customer.profile_name}!"
-
-        whatsapp_reply(msisdn, success_msg, [random_success_gif()])
-        time.sleep(0.5) # twilios send_at function was not working, so I had to compromise :/
+        whatsapp_reply(
+            msisdn, f"*Thank you {customer.profile_name}!*", [random_success_gif()]
+        )
+        time.sleep(0.5)  # twilios send_at function was not working, so I had to compromise :/
         ask_a_question(customer=customer)
     else:
         ask_a_question(customer)
 
     return HttpResponse("OK")
+
+def message_responses(request):
+    table_data = []
+    for ask in Ask.objects.all():
+        table_data.append({"question": ask.question.content, "response": ask.answer, "msisdn": ask.customer.msisdn, "profile_name": ask.customer.profile_name})
+    return render(request, 'questions/responses.html', {"table_data":table_data})

@@ -16,9 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from questions.views import twilio_messages_ingress
+from questions.views import twilio_messages_ingress, message_responses
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("questions/twilio_messages", twilio_messages_ingress),
+    path("questions/responses", message_responses),
 ]
