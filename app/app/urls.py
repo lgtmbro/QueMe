@@ -19,7 +19,7 @@ from django.urls import path
 from questions.views import twilio_messages_ingress, message_responses
 
 urlpatterns = [
+    path("", message_responses),
     path("admin/", admin.site.urls),
     path("questions/twilio_messages", twilio_messages_ingress),
-    path("questions/responses", message_responses),
 ]
