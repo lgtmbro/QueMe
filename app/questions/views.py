@@ -79,15 +79,25 @@ def twilio_messages_ingress(request):
         whatsapp_reply(
             msisdn, f"*Thank you {customer.profile_name}!*", [random_success_gif()]
         )
-        time.sleep(0.5)  # twilios send_at function was not working, so I had to compromise :/
+        time.sleep(
+            0.5
+        )  # twilios send_at function was not working, so I had to compromise :/
         ask_a_question(customer=customer)
     else:
         ask_a_question(customer)
 
     return HttpResponse("OK")
 
+
 def message_responses(request):
     table_data = []
     for ask in Ask.objects.all():
-        table_data.append({"question": ask.question.content, "response": ask.answer, "msisdn": ask.customer.msisdn, "profile_name": ask.customer.profile_name})
-    return render(request, 'questions/responses.html', {"table_data":table_data})
+        table_data.append(
+            {
+                "question": ask.question.content,
+                "response": ask.answer,
+                "msisdn": ask.customer.msisdn,
+                "profile_name": ask.customer.profile_name,
+            }
+        )
+    return render(request, "questions/responses.html", {"table_data": table_data})
