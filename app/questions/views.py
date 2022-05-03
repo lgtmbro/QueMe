@@ -1,8 +1,11 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponse
+from django.core.exceptions import BadRequest
 
-from .models import Customer
+from .utils import whatsapp_reply
+
+from .models import Customer, Question
 
 
 # Create your views here.
@@ -10,9 +13,13 @@ from .models import Customer
 @csrf_exempt
 def twilio_messages_ingress(request):
     if request.method != "POST":
-        raise HttpResponseBadRequest("Invalid Request.")
+        raise BadRequest("Invalid Request.")
+
     msisdn = f"+{request.POST.get('WaId')}"
     profile_name = request.POST.get('ProfileName')
+
+    if None in [msisdn, profile_name]:
+        raise BadRequest("Invalid Request.")
 
     try:
         customer = Customer.objects.get(msisdn=msisdn)
@@ -22,6 +29,9 @@ def twilio_messages_ingress(request):
     if not customer:
         customer = Customer.objects.create(msisdn=msisdn, profile_name=profile_name)
 
-    print(customer)
+    question = Question.objects.get(active=True)
+
+
+    whatsapp_reply(msisdn, "*GOT IT*")
 
     return HttpResponse("OK")
