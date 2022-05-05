@@ -8,6 +8,7 @@ class Customer(models.Model):
     profile_name = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    has_certificate = models.BooleanField(default=False)
 
     def __str__(self):
         return f"C: {self.profile_name} @ {self.msisdn}"
@@ -30,3 +31,6 @@ class Ask(models.Model):
     status = models.TextField(default="initialized")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"A: {self.status}: {self.customer.profile_name}: {self.question.content}"
