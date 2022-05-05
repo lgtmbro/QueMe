@@ -13,6 +13,6 @@ class Command(BaseCommand):
                     file_path = f'http://{environ.get("HOSTED_URL")}/static/{cert}'
                 else:
                     file_path = f'http://localhost:8000/static/{cert}'
-                message = """✨ A huge thank you for trying out this little whatsapp bot,\n\nit was extremely fun to put together. However the time has come to put this bot to rest.\n\n🎆Please print out and hang this certificate on you wall! 🤣"""
+                message = """✨ A huge thank you for trying out this little whatsapp bot!\n\nit was extremely fun to put together. However the time has come to put this bot to rest.\n\n🎆Please print out and hang this certificate on you wall! 🤣"""
                 whatsapp_reply(customer.msisdn, message, [file_path])
                 print(cert)
